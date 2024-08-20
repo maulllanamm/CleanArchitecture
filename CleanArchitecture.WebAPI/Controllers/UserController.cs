@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CleanArchitecture.WebAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]/[action]")]
+    [Route("users")]
     public class UserController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -38,14 +38,14 @@ namespace CleanArchitecture.WebAPI.Controllers
             return Ok(result);
         }
         [Authorize]
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<ActionResult<GetByIdUserResponse>> GetById(int id, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetByIdUserRequest(id), cancellationToken);
             return Ok(result);
         }
         [Authorize]
-        [HttpGet]
+        [HttpGet("{username}")]
         public async Task<ActionResult<GetByIdUserResponse>> GetByUsername(string username, CancellationToken cancellationToken)
         {
 
@@ -62,7 +62,7 @@ namespace CleanArchitecture.WebAPI.Controllers
             return Ok(result);
         }
 
-        [HttpDelete("id")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult<DeleteUserRequest>> Delete(int id,
            CancellationToken cancellationToken)
         {

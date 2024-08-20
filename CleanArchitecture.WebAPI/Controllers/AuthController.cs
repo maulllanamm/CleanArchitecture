@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using CleanArchitecture.Application.Common.Exceptions;
 using CleanArchitecture.Application.Features.AuthFeatures.ForgotPasswordFeatures;
 using CleanArchitecture.Application.Features.AuthFeatures.LoginFeatures;
@@ -7,14 +8,11 @@ using CleanArchitecture.Application.Features.AuthFeatures.VerifyFeatures;
 using CleanArchitecture.Application.Helper.Interface;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Threading;
 
 namespace CleanArchitecture.WebAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]/[action]")]
+    [Route("auth")]
     public class AuthController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -31,7 +29,7 @@ namespace CleanArchitecture.WebAPI.Controllers
         }
 
 
-        [HttpPost]
+        [HttpPost("register")]
         public async Task<ActionResult<RegisterResponse>> Register(RegisterRequest request,
            CancellationToken cancellationToken)
         {
@@ -39,7 +37,7 @@ namespace CleanArchitecture.WebAPI.Controllers
             return Ok(result);
         }
 
-        [HttpPost]
+        [HttpPost("login")]
         public async Task<ActionResult<string>> Login(LoginRequest request,
            CancellationToken cancellationToken)
         {
@@ -50,14 +48,14 @@ namespace CleanArchitecture.WebAPI.Controllers
             return Ok(accessToken);
         }
 
-        [HttpPost]
+        [HttpPost("verify")]
         public async Task<ActionResult<string>> Verify(string verifyToken ,CancellationToken cancellationToken)
         {
             var verify = await _mediator.Send(new VerifyRequest(verifyToken), cancellationToken);
             return Ok(verify);
         }
 
-        [HttpPost]
+        [HttpPost("refresh-token")]
         public async Task<ActionResult<string>> RefreshToken()
         {
             var refreshToken = _httpContextAccessor.HttpContext.Request.Cookies["refreshToken"];
@@ -81,14 +79,14 @@ namespace CleanArchitecture.WebAPI.Controllers
             return Ok(newAccessToken);
         }
 
-        [HttpPost]
+        [HttpPost("forgot-password")]
         public async Task<ActionResult<string>> ForgotPassword(string email, CancellationToken cancellationToken)
         {
             var forgotPassword = await _mediator.Send(new ForgotPasswordRequest(email), cancellationToken);
             return Ok(forgotPassword);
         }
 
-        [HttpPost]
+        [HttpPost("reset-password")]
         public async Task<ActionResult<string>> ResetPassword(ResetPasswordRequest request, CancellationToken cancellationToken)
         {
             var resetPassword = await _mediator.Send(request, cancellationToken);

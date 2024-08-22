@@ -27,12 +27,14 @@ namespace CleanArchitecture.Application.Helper
             _mapper = mapper;
         }
 
-        public string GenerateRefreshToken(string username, string roleName)
+        public string GenerateRefreshToken(string id, string email,string username, string roleName)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_token.Secret));
             var credential = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
             List<Claim> claims = new List<Claim>
             {
+                new Claim(ClaimTypes.Sid, id),
+                new Claim(ClaimTypes.Email, email),
                 new Claim(ClaimTypes.Name, username),
                 new Claim(ClaimTypes.Role, roleName),
             };

@@ -6,7 +6,7 @@ namespace CleanArchitecture.Application.Helper.Interface
 {
     public interface IRefreshTokenHelper
     {
-        public string GenerateRefreshToken(string username, string roleName);
+        public string GenerateRefreshToken(string id, string email, string username, string roleName);
         public void SetRefreshToken(string newRefreshToken, string username);
         public Task ValidateRefreshToken(string username, string refreshToken);
     }

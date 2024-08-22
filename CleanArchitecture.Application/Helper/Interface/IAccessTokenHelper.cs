@@ -5,7 +5,7 @@ namespace CleanArchitecture.Application.Helper.Interface
 {
     public interface IAccessTokenHelper
     {
-        public string GenerateAccessToken(string username , string roleName);
+        public string GenerateAccessToken(string id, string email, string username , string roleName);
         public ClaimsPrincipal ValidateAccessToken(string token);
     }
 }

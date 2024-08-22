@@ -42,8 +42,8 @@ namespace CleanArchitecture.WebAPI.Controllers
            CancellationToken cancellationToken)
         {
             var user = await _mediator.Send(request, cancellationToken);
-            var accessToken = _accessTokenHelper.GenerateAccessToken(user.Username, user.Role.name);
-            var refreshToken = _refreshTokenHelper.GenerateRefreshToken(user.Username, user.Role.name);
+            var accessToken = _accessTokenHelper.GenerateAccessToken(user.Id.ToString(), user.Email, user.Username, user.Role.name);
+            var refreshToken = _refreshTokenHelper.GenerateRefreshToken(user.Id.ToString(), user.Email, user.Username, user.Role.name);
             _refreshTokenHelper.SetRefreshToken(refreshToken, user.Username);
             return Ok(accessToken);
         }
@@ -69,12 +69,14 @@ namespace CleanArchitecture.WebAPI.Controllers
             var principal = _accessTokenHelper.ValidateAccessToken(refreshToken);
 
             // Mendapatkan informasi user dari token
+            var id = principal.FindFirstValue(ClaimTypes.Sid);
+            var email = principal.FindFirstValue(ClaimTypes.Email);
             var username = principal.FindFirstValue(ClaimTypes.Name);
             var roleName = principal.FindFirstValue(ClaimTypes.Role);
             _refreshTokenHelper.ValidateRefreshToken(username, refreshToken);
 
-            var newAccessToken = _accessTokenHelper.GenerateAccessToken(username, roleName);
-            var newRefreshToken = _refreshTokenHelper.GenerateRefreshToken(username, roleName);
+            var newAccessToken = _accessTokenHelper.GenerateAccessToken(id,email, username, roleName);
+            var newRefreshToken = _refreshTokenHelper.GenerateRefreshToken(id,email, username, roleName);
             _refreshTokenHelper.SetRefreshToken(newRefreshToken, username);
             return Ok(newAccessToken);
         }

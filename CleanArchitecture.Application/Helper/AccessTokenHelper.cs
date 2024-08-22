@@ -18,12 +18,14 @@ namespace CleanArchitecture.Application.Helper
             _token = token.Value;
         }
 
-        public string GenerateAccessToken(string username, string roleName)
+        public string GenerateAccessToken(string id, string email, string username, string roleName)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_token.Secret));
             var credential = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
             List<Claim> claims = new List<Claim>
             {
+                new Claim(ClaimTypes.Sid, id),
+                new Claim(ClaimTypes.Email, email),
                 new Claim(ClaimTypes.Name, username),
                 new Claim(ClaimTypes.Role, roleName),
             };

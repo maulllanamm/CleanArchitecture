@@ -6,11 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CleanArchitecture.Persistence.Repositories
 {
-    public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class, IBaseEntity
+    public class BaseGuidRepository<TEntity> : IBaseGuidRepository<TEntity> where TEntity : class, IBaseGuidEntity
     {
         protected readonly DataContext _context;
 
-        public BaseRepository(DataContext context)
+        public BaseGuidRepository(DataContext context)
         {
             _context = context;
         }
@@ -36,7 +36,7 @@ namespace CleanArchitecture.Persistence.Repositories
             return await _context.Set<TEntity>().Where(x => x.is_deleted == false).ToListAsync();
         }
 
-        public async Task<List<TEntity>> GetByListId(List<int> listId)
+        public async Task<List<TEntity>> GetByListId(List<Guid> listId)
         {
             return await _context.Set<TEntity>().Where(e => listId.Contains(e.id) && e.is_deleted == false).ToListAsync();
         }
@@ -57,7 +57,7 @@ namespace CleanArchitecture.Persistence.Repositories
         }
 
 
-        public async Task<TEntity> GetById(int id)
+        public async Task<TEntity> GetById(Guid id)
         {
             return _context.Set<TEntity>().FirstOrDefault(e => e.id == id && e.is_deleted == false);
         }
@@ -149,7 +149,7 @@ namespace CleanArchitecture.Persistence.Repositories
                     if (editedEntity != null)
                     {
                         unitOfWork.BeginTransaction();
-                        // Update properti dari editedEntity dengan nilai dari TEntity yang baru
+                        // Update properti dari editedEntity dengan nilai dari TGuidEntity yang baru
                         _context.Entry(editedEntity).CurrentValues.SetValues(entity);
                         _context.SaveChanges();
                         unitOfWork.Commit();
@@ -188,7 +188,7 @@ namespace CleanArchitecture.Persistence.Repositories
             return entities.Count();
         }
 
-        public async Task<bool> Delete(int id)
+        public async Task<bool> Delete(Guid id)
         {
             var entityToDelete = _context.Set<TEntity>().FirstOrDefault(e => e.id == id && e.is_deleted == false);
             if (entityToDelete != null)
@@ -233,7 +233,7 @@ namespace CleanArchitecture.Persistence.Repositories
             return entities.Count();
         }
 
-        public async Task<bool> SoftDelete(int id)
+        public async Task<bool> SoftDelete(Guid id)
         {
             var entityToDelete = _context.Set<TEntity>().FirstOrDefault(e => e.id == id && e.is_deleted == false);
             if (entityToDelete != null)
@@ -259,7 +259,7 @@ namespace CleanArchitecture.Persistence.Repositories
             return false;
         }
 
-        public async Task<int> SoftDeleteBulk(List<int> entitiesId)
+        public async Task<int> SoftDeleteBulk(List<Guid> entitiesId)
         {
             var entitiesToDelete = _context.Set<TEntity>().Where(x => entitiesId.Contains(x.id) && x.is_deleted == false).ToList();
             if (entitiesToDelete != null)

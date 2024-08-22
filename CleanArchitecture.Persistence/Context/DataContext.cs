@@ -22,6 +22,11 @@ namespace CleanArchitecture.Persistence.Context
 
             modelBuilder.Entity<RolePermission>()
             .HasKey(rp => new { rp.role_id, rp.permission_id });
+            
+            modelBuilder.Entity<Role>().HasData(
+                new Role { id = 1, name = "Administrator" },
+                new Role { id = 2, name = "User" }
+            );
 
             modelBuilder.Entity<Role>()
             .HasMany(r => r.role_permissions)

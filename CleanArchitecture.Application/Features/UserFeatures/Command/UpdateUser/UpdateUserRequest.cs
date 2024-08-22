@@ -4,7 +4,7 @@ namespace CleanArchitecture.Application.Features.UserFeatures.Command.UpdateUser
 {
     public sealed record UpdateUserRequest
     (
-        int Id,
+        Guid Id,
         string Username,
         string Email,
         string Fullname,

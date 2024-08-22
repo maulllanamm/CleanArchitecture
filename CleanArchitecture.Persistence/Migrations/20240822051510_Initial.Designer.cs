@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CleanArchitecture.Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240821045310_Initial")]
+    [Migration("20240822051510_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -64,6 +64,18 @@ namespace CleanArchitecture.Persistence.Migrations
                     b.HasKey("id");
 
                     b.ToTable("roles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            id = 1,
+                            name = "Administrator"
+                        },
+                        new
+                        {
+                            id = 2,
+                            name = "User"
+                        });
                 });
 
             modelBuilder.Entity("CleanArchitecture.Domain.Entities.RolePermission", b =>
@@ -83,11 +95,9 @@ namespace CleanArchitecture.Persistence.Migrations
 
             modelBuilder.Entity("CleanArchitecture.Domain.Entities.User", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<Guid>("id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+                        .HasColumnType("uuid");
 
                     b.Property<string>("address")
                         .IsRequired()

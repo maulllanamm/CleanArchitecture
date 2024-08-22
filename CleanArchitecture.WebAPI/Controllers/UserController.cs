@@ -42,7 +42,7 @@ namespace CleanArchitecture.WebAPI.Controllers
         }
         [Authorize]
         [HttpGet("id")]
-        public async Task<ActionResult<GetByIdUserResponse>> GetById(int id, CancellationToken cancellationToken)
+        public async Task<ActionResult<GetByIdUserResponse>> GetById(Guid id, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetByIdUserRequest(id), cancellationToken);
             return Ok(result);
@@ -50,7 +50,7 @@ namespace CleanArchitecture.WebAPI.Controllers
         
         [Authorize]
         [HttpPut("id")]
-        public async Task<ActionResult<UpdateUserResponse>> Update(int id, UpdateUserRequestDTO dto,
+        public async Task<ActionResult<UpdateUserResponse>> Update(Guid id, UpdateUserRequestDTO dto,
            CancellationToken cancellationToken)
         {
             var request = new UpdateUserRequest(
@@ -75,7 +75,7 @@ namespace CleanArchitecture.WebAPI.Controllers
 
         [Authorize]
         [HttpDelete("id")]
-        public async Task<ActionResult<DeleteUserRequest>> Delete(int id,
+        public async Task<ActionResult<DeleteUserRequest>> Delete(Guid id,
            CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new DeleteUserRequest(id), cancellationToken);

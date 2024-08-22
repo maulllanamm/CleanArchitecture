@@ -26,6 +26,17 @@ namespace CleanArchitecture.Persistence.Repositories
                 _repositories[type] = new BaseRepository<Entity>(_context);
             return (IBaseRepository<Entity>)_repositories[type];
         }
+        
+        public IBaseGuidRepository<Entity> GetBaseGuidRepository<Entity>() where Entity : class, IBaseGuidEntity
+        {
+            if (_repositories == null)
+                _repositories = new Dictionary<Type, object>();
+
+            var type = typeof(Entity);
+            if (!_repositories.ContainsKey(type))
+                _repositories[type] = new BaseGuidRepository<Entity>(_context);
+            return (IBaseGuidRepository<Entity>)_repositories[type];
+        }
 
 
         public void BeginTransaction()

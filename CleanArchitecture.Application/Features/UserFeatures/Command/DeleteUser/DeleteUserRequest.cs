@@ -4,6 +4,6 @@ namespace CleanArchitecture.Application.Features.UserFeatures.Command.DeleteUser
 {
     public sealed record DeleteUserRequest
     (
-        int id
+        Guid id
     ) : IRequest<bool>;
 }

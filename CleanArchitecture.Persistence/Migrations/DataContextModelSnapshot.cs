@@ -62,6 +62,18 @@ namespace CleanArchitecture.Persistence.Migrations
                     b.HasKey("id");
 
                     b.ToTable("roles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            id = 1,
+                            name = "Administrator"
+                        },
+                        new
+                        {
+                            id = 2,
+                            name = "User"
+                        });
                 });
 
             modelBuilder.Entity("CleanArchitecture.Domain.Entities.RolePermission", b =>
@@ -81,11 +93,9 @@ namespace CleanArchitecture.Persistence.Migrations
 
             modelBuilder.Entity("CleanArchitecture.Domain.Entities.User", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<Guid>("id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+                        .HasColumnType("uuid");
 
                     b.Property<string>("address")
                         .IsRequired()

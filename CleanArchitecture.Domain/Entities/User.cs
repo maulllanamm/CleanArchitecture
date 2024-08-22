@@ -4,11 +4,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CleanArchitecture.Domain.Entities
 {
-    public class User : BaseEntity
+    public class User : BaseGuidEntity
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public override int id { get; set; }
         public string username { get; set; }
         public string password_salt { get; set; }
         public string password_hash { get; set; }

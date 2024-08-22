@@ -66,8 +66,7 @@ namespace CleanArchitecture.Persistence.Migrations
                 name: "users",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
                     username = table.Column<string>(type: "text", nullable: false),
                     password_salt = table.Column<string>(type: "text", nullable: false),
                     password_hash = table.Column<string>(type: "text", nullable: false),
@@ -98,6 +97,15 @@ namespace CleanArchitecture.Persistence.Migrations
                         principalTable: "roles",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "roles",
+                columns: new[] { "id", "name" },
+                values: new object[,]
+                {
+                    { 1, "Administrator" },
+                    { 2, "User" }
                 });
 
             migrationBuilder.CreateIndex(

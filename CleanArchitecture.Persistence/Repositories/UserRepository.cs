@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CleanArchitecture.Persistence.Repositories
 {
-    public class UserRepository : BaseRepository<User>, IUserRepository
+    public class UserRepository : BaseGuidRepository<User>, IUserRepository
     {
         public UserRepository(DataContext context) : base(context)
         {
@@ -18,7 +18,7 @@ namespace CleanArchitecture.Persistence.Repositories
                 .ToListAsync();
         }
 
-        public async Task<User> GetById(int id)
+        public async Task<User> GetById(Guid id)
         {
             return _context.Users
                 .Include(r => r.role)

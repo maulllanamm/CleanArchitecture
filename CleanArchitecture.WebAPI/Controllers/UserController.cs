@@ -69,11 +69,11 @@ namespace CleanArchitecture.WebAPI.Controllers
                 dto.Address
             );
             
-            var username = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+            var claimId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Sid)?.Value;
             var role = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role)?.Value;
-            if (username != request.Username || role != UserRole.Administrator)
+            if (role != UserRole.Administrator && claimId != id.ToString())
             {
-                return Forbid();
+                throw new ForbiddenException( "You haven't permission to update this user.");
             }
             
             var result = await _mediator.Send(request, cancellationToken);

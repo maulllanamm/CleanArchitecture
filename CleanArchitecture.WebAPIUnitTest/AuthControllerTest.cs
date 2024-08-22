@@ -95,7 +95,7 @@ namespace CleanArchitecture.WebAPIUnitTest
             var cancellationToken = CancellationToken.None;
             var expectedResult = new LoginResponse // Mock expected response
             {
-                Id = 1,
+                Id = new Guid(),
                 Username = request.Username,
                 Email = "testEmail@gmail.com",
                 FullName = "testFullName",
@@ -113,11 +113,11 @@ namespace CleanArchitecture.WebAPIUnitTest
                 .ReturnsAsync(expectedResult);
 
             _accessTokenHelperMock
-                .Setup(m => m.GenerateAccessToken(request.Username, expectedResult.Role.name))
+                .Setup(m => m.GenerateAccessToken(expectedResult.Id.ToString(), expectedResult.Email,request.Username, expectedResult.Role.name))
                 .Returns("fake_access_token");
 
             _refreshTokenHelperMock
-                .Setup(m => m.GenerateRefreshToken(request.Username, expectedResult.Role.name))
+                .Setup(m => m.GenerateRefreshToken(expectedResult.Id.ToString(), expectedResult.Email,request.Username, expectedResult.Role.name))
                 .Returns("fake_refresh_token");
 
             _refreshTokenHelperMock

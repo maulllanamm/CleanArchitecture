@@ -1,7 +1,10 @@
-﻿using AutoMapper;
+﻿using System.Security.Claims;
+using AutoMapper;
+using CleanArchitecture.Application.Common.Exceptions;
 using CleanArchitecture.Application.Repositories;
 using CleanArchitecture.Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace CleanArchitecture.Application.Features.UserFeatures.Command.UpdateUser
 {
@@ -9,10 +12,12 @@ namespace CleanArchitecture.Application.Features.UserFeatures.Command.UpdateUser
     {
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
-        public UpdateUserHandler(IMapper mapper, IUserRepository userRepository)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public UpdateUserHandler(IMapper mapper, IUserRepository userRepository, IHttpContextAccessor httpContextAccessor)
         {
             _mapper = mapper;
             _userRepository = userRepository;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<UpdateUserResponse> Handle(UpdateUserRequest request, CancellationToken cancellationToken)
@@ -21,7 +26,7 @@ namespace CleanArchitecture.Application.Features.UserFeatures.Command.UpdateUser
             {
                 var newUser = _mapper.Map<User>(request);
 
-                var user = await _userRepository.GetById(request.id);
+                var user = await _userRepository.GetById(request.Id);
                 user.username = newUser.username;
                 user.email = newUser.email;
                 user.full_name = newUser.full_name;

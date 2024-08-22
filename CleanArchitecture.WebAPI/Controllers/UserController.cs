@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using CleanArchitecture.Application.Common.Exceptions;
 using CleanArchitecture.Application.Features.UserFeatures.Command.DeleteUser;
 using CleanArchitecture.Application.Features.UserFeatures.Command.UpdateUser;
 using CleanArchitecture.Application.Features.UserFeatures.Query.GetAll;
@@ -16,11 +18,12 @@ namespace CleanArchitecture.WebAPI.Controllers
     {
         private readonly IMediator _mediator;
         private readonly ICacheHelper _cacheHelper;
-
-        public UserController(IMediator mediator, ICacheHelper cacheHelper)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public UserController(IMediator mediator, ICacheHelper cacheHelper, IHttpContextAccessor httpContextAccessor)
         {
             _mediator = mediator;
             _cacheHelper = cacheHelper;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         [Authorize]
@@ -38,31 +41,40 @@ namespace CleanArchitecture.WebAPI.Controllers
             return Ok(result);
         }
         [Authorize]
-        [HttpGet("{id}")]
+        [HttpGet("id")]
         public async Task<ActionResult<GetByIdUserResponse>> GetById(int id, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetByIdUserRequest(id), cancellationToken);
             return Ok(result);
         }
+        
         [Authorize]
-        [HttpGet("{username}")]
-        public async Task<ActionResult<GetByIdUserResponse>> GetByUsername(string username, CancellationToken cancellationToken)
-        {
-
-            var result = await _mediator.Send(new GetByUsernameRequest(username), cancellationToken);
-            return Ok(result);
-        }
-
-
-        [HttpPut]
-        public async Task<ActionResult<UpdateUserResponse>> Update(UpdateUserRequest request,
+        [HttpPut("id")]
+        public async Task<ActionResult<UpdateUserResponse>> Update(int id, UpdateUserRequestDTO dto,
            CancellationToken cancellationToken)
         {
+            var request = new UpdateUserRequest(
+                id,
+                dto.Username,
+                dto.Email,
+                dto.Fullname,
+                dto.PhoneNumber,
+                dto.Address
+            );
+            
+            var username = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+            var role = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role)?.Value;
+            if (username != request.Username || role != "Administrator")
+            {
+                return Forbid();
+            }
+            
             var result = await _mediator.Send(request, cancellationToken);
             return Ok(result);
         }
 
-        [HttpDelete("{id}")]
+        [Authorize]
+        [HttpDelete("id")]
         public async Task<ActionResult<DeleteUserRequest>> Delete(int id,
            CancellationToken cancellationToken)
         {

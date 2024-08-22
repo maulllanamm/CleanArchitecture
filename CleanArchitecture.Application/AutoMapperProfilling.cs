@@ -16,6 +16,8 @@ namespace CleanArchitecture.Application
             SourceMemberNamingConvention = new LowerUnderscoreNamingConvention();
             DestinationMemberNamingConvention = new PascalCaseNamingConvention();
 
+            CreateMap<UpdateUserRequestDTO, UpdateUserRequest>();
+            
             CreateMap<UpdateUserRequest, User>();
             CreateMap<User, UpdateUserResponse>();
 

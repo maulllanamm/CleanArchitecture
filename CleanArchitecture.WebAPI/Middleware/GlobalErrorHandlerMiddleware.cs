@@ -68,7 +68,8 @@ namespace CleanArchitecture.WebAPI.Middleware
                 await httpContext.Response.WriteAsync(response);
 
                 return;
-            }catch (UnauthorizedException ex)
+            }
+            catch (UnauthorizedException ex)
             {
 
                 var detail = new ProblemDetails()
@@ -77,7 +78,7 @@ namespace CleanArchitecture.WebAPI.Middleware
                     Instance = httpContext.Request.Path,
                     Status = (int)HttpStatusCode.Unauthorized,
                     Title = "Unauthorized",
-                    Type = "https://example.com/not-found" 
+                    Type = "https://example.com/unauthorize" 
                 };
 
                 var response = JsonSerializer.Serialize(detail, new JsonSerializerOptions
@@ -86,6 +87,29 @@ namespace CleanArchitecture.WebAPI.Middleware
                 });
 
                 httpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                httpContext.Response.ContentType = "application/json";
+                await httpContext.Response.WriteAsync(response);
+
+                return;
+            }
+            catch (ForbiddenException ex)
+            {
+
+                var detail = new ProblemDetails()
+                {
+                    Detail = ex.Message,
+                    Instance = httpContext.Request.Path,
+                    Status = (int)HttpStatusCode.Forbidden,
+                    Title = "Don't have permission",
+                    Type = "https://example.com/forbidden" 
+                };
+
+                var response = JsonSerializer.Serialize(detail, new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                });
+
+                httpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
                 httpContext.Response.ContentType = "application/json";
                 await httpContext.Response.WriteAsync(response);
 

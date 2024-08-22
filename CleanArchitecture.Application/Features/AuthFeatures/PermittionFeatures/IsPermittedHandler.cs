@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
+using CleanArchitecture.Application.Helper.EnumCollection;
 
 namespace CleanArchitecture.Application.Features.AuthFeatures.PermittionFeatures
 {
@@ -19,12 +20,12 @@ namespace CleanArchitecture.Application.Features.AuthFeatures.PermittionFeatures
             var role = request.HttpContext.User.FindFirst(ClaimTypes.Role)?.Value;
             var path = request.HttpContext.Request.Path.Value;
             var method = request.HttpContext.Request.Method.ToString();
-            var isPermitted = true;
+            var isPermitted = false;
 
 
-            if (role == "Administrator" || role is null)
+            if (role == UserRole.Administrator || role is null)
             {
-                return isPermitted;
+                return true;
             }
 
             foreach (var rolePermission in request.role.role_permissions)

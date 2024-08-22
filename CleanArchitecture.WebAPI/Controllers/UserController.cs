@@ -5,6 +5,7 @@ using CleanArchitecture.Application.Features.UserFeatures.Command.UpdateUser;
 using CleanArchitecture.Application.Features.UserFeatures.Query.GetAll;
 using CleanArchitecture.Application.Features.UserFeatures.Query.GetById;
 using CleanArchitecture.Application.Features.UserFeatures.Query.GetByUsername;
+using CleanArchitecture.Application.Helper.EnumCollection;
 using CleanArchitecture.Application.Helper.Interface;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -44,6 +45,12 @@ namespace CleanArchitecture.WebAPI.Controllers
         [HttpGet("id")]
         public async Task<ActionResult<GetByIdUserResponse>> GetById(Guid id, CancellationToken cancellationToken)
         {
+            var claimId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Sid)?.Value;
+            var role = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role)?.Value;
+            if (role != UserRole.Administrator && claimId != id.ToString())
+            {
+                throw new ForbiddenException( "You haven't permission to get this id.");
+            }
             var result = await _mediator.Send(new GetByIdUserRequest(id), cancellationToken);
             return Ok(result);
         }
@@ -64,7 +71,7 @@ namespace CleanArchitecture.WebAPI.Controllers
             
             var username = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
             var role = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role)?.Value;
-            if (username != request.Username || role != "Administrator")
+            if (username != request.Username || role != UserRole.Administrator)
             {
                 return Forbid();
             }

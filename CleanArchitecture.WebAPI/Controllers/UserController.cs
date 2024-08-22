@@ -85,6 +85,12 @@ namespace CleanArchitecture.WebAPI.Controllers
         public async Task<ActionResult<DeleteUserRequest>> Delete(Guid id,
            CancellationToken cancellationToken)
         {
+            var role = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role)?.Value;
+            if (role != UserRole.Administrator )
+            {
+                throw new ForbiddenException( "You haven't permission to delete this user.");
+            }
+            
             var result = await _mediator.Send(new DeleteUserRequest(id), cancellationToken);
             return Ok(result);
         }
